@@ -17,29 +17,34 @@ from counter import attempt_count
 logger = get_logger()
 NUM_CORES = multiprocessing.cpu_count()
 
+
 class ObjectCounter():
 
     def __init__(self, initial_frame, detector, tracker, droi, show_droi, mcdf, mctf, di, counting_lines, show_counts, hud_color):
-        self.frame = initial_frame # current frame of video
+        self.frame = initial_frame  # current frame of video
         self.detector = detector
         self.tracker = tracker
-        self.droi = droi # detection region of interest
+        self.droi = droi  # detection region of interest
         self.show_droi = show_droi
-        self.mcdf = mcdf # maximum consecutive detection failures
-        self.mctf = mctf # maximum consecutive tracking failures
+        self.mcdf = mcdf  # maximum consecutive detection failures
+        self.mctf = mctf  # maximum consecutive tracking failures
         self.detection_interval = di
         self.counting_lines = counting_lines
         self.blobs = {}
         self.f_height, self.f_width, _ = self.frame.shape
-        self.frame_count = 0 # number of frames since last detection
-        self.counts = {counting_line['label']: {} for counting_line in counting_lines} # counts of objects by type for each counting line
+        self.frame_count = 0  # number of frames since last detection
+        # counts of objects by type for each counting line
+        self.counts = {counting_line['label']: {}
+                       for counting_line in counting_lines}
         self.show_counts = show_counts
         self.hud_color = hud_color
 
         # create blobs from initial frame
         droi_frame = get_roi_frame(self.frame, self.droi)
-        _bounding_boxes, _classes, _confidences = get_bounding_boxes(droi_frame, self.detector)
-        self.blobs = add_new_blobs(_bounding_boxes, _classes, _confidences, self.blobs, self.frame, self.tracker, self.mcdf)
+        _bounding_boxes, _classes, _confidences = get_bounding_boxes(
+            droi_frame, self.detector)
+        self.blobs = add_new_blobs(
+            _bounding_boxes, _classes, _confidences, self.blobs, self.frame, self.tracker, self.mcdf)
 
     def get_counts(self):
         '''
@@ -62,7 +67,7 @@ class ObjectCounter():
 
         classes = []
         lines = []
-        lines_by_class = [] # flattened self.counts
+        lines_by_class = []  # flattened self.counts
         total_count = 0
         class_counts = {}
 
@@ -78,7 +83,8 @@ class ObjectCounter():
                 # lines
                 line_count += class_count
                 # lines by class
-                lines_by_class.append({'line': line_label, 'class': class_name, 'count': class_count})
+                lines_by_class.append(
+                    {'line': line_label, 'class': class_name, 'count': class_count})
 
             lines.append({'line': line_label, 'count': line_count})
             total_count += line_count
@@ -103,7 +109,8 @@ class ObjectCounter():
 
         for blob_id, blob in blobs_list:
             # count object if it has crossed a counting line
-            blob, self.counts = attempt_count(blob, blob_id, self.counting_lines, self.counts)
+            blob, self.counts = attempt_count(
+                blob, blob_id, self.counting_lines, self.counts)
             self.blobs[blob_id] = blob
 
             # remove blob if it has reached the limit for tracking failures
@@ -113,9 +120,11 @@ class ObjectCounter():
         if self.frame_count >= self.detection_interval:
             # rerun detection
             droi_frame = get_roi_frame(self.frame, self.droi)
-            _bounding_boxes, _classes, _confidences = get_bounding_boxes(droi_frame, self.detector)
+            _bounding_boxes, _classes, _confidences = get_bounding_boxes(
+                droi_frame, self.detector)
 
-            self.blobs = add_new_blobs(_bounding_boxes, _classes, _confidences, self.blobs, self.frame, self.tracker, self.mcdf)
+            self.blobs = add_new_blobs(
+                _bounding_boxes, _classes, _confidences, self.blobs, self.frame, self.tracker, self.mcdf)
             self.blobs = remove_duplicates(self.blobs)
             self.frame_count = 0
 
@@ -131,15 +140,19 @@ class ObjectCounter():
             (x, y, w, h) = [int(v) for v in blob.bounding_box]
             cv2.rectangle(frame, (x, y), (x + w, y + h), self.hud_color, 2)
             object_label = 'I: ' + _id[:8] \
-                            if blob.type is None \
-                            else 'I: {0}, T: {1} ({2})'.format(_id[:8], blob.type, str(blob.type_confidence)[:4])
-            cv2.putText(frame, object_label, (x, y - 5), font, 1, self.hud_color, 2, line_type)
+                if blob.type is None \
+                else 'I: {0}, T: {1} ({2})'.format(_id[:8], blob.type, str(blob.type_confidence)[:4])
+            cv2.putText(frame, object_label, (x, y - 5),
+                        font, 1, self.hud_color, 2, line_type)
 
         # draw counting lines
         for counting_line in self.counting_lines:
-            cv2.line(frame, counting_line['line'][0], counting_line['line'][1], self.hud_color, 3)
-            cl_label_origin = (counting_line['line'][0][0], counting_line['line'][0][1] + 35)
-            cv2.putText(frame, counting_line['label'], cl_label_origin, font, 1, self.hud_color, 2, line_type)
+            cv2.line(frame, counting_line['line'][0],
+                     counting_line['line'][1], self.hud_color, 3)
+            cl_label_origin = (
+                counting_line['line'][0][0], counting_line['line'][0][1] + 35)
+            cv2.putText(
+                frame, counting_line['label'], cl_label_origin, font, 1, self.hud_color, 2, line_type)
 
         # show detection roi
         if self.show_droi:
@@ -149,10 +162,12 @@ class ObjectCounter():
         if self.show_counts:
             offset = 1
             for line, objects in self.counts.items():
-                cv2.putText(frame, line, (10, 40 * offset), font, 1, self.hud_color, 2, line_type)
+                cv2.putText(frame, line, (10, 40 * offset), font,
+                            1, self.hud_color, 2, line_type)
                 for label, count in objects.items():
                     offset += 1
-                    cv2.putText(frame, "{}: {}".format(label, count), (10, 40 * offset), font, 1, self.hud_color, 2, line_type)
+                    cv2.putText(frame, "{}: {}".format(
+                        label, count), (10, 40 * offset), font, 1, self.hud_color, 2, line_type)
                 offset += 2
 
         return frame

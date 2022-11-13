@@ -12,7 +12,9 @@ def test_blob_creation():
     assert blob.bounding_box == _bounding_box
     assert blob.type == _type
     assert blob.type_confidence == _confidence
-    assert isinstance(blob.tracker, cv2.Tracker), 'blob tracker is an instance of OpenCV Tracker class'
+    assert isinstance(
+        blob.tracker, cv2.Tracker), 'blob tracker is an instance of OpenCV Tracker class'
+
 
 def test_blob_update():
     _bounding_box = [1, 1, 4, 4]

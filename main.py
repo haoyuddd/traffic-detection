@@ -4,6 +4,12 @@ VCS entry point.
 
 # pylint: disable=wrong-import-position
 
+from ObjectCounter import ObjectCounter
+from util.debugger import mouse_callback
+from util.logger import get_logger
+from util.image import take_screenshot
+from util.logger import init_logger
+import settings
 import sys
 import time
 import cv2
@@ -11,12 +17,6 @@ import cv2
 from dotenv import load_dotenv
 load_dotenv()
 
-import settings
-from util.logger import init_logger
-from util.image import take_screenshot
-from util.logger import get_logger
-from util.debugger import mouse_callback
-from ObjectCounter import ObjectCounter
 
 init_logger()
 logger = get_logger()
@@ -54,8 +54,8 @@ def run():
     use_droi = settings.USE_DROI
     # create detection region of interest polygon
     droi = settings.DROI \
-            if use_droi \
-            else [(0, 0), (f_width, 0), (f_width, f_height), (0, f_height)]
+        if use_droi \
+        else [(0, 0), (f_width, 0), (f_width, f_height), (0, f_height)]
     show_droi = settings.SHOW_DROI
     counting_lines = settings.COUNTING_LINES
     show_counts = settings.SHOW_COUNTS
@@ -67,10 +67,10 @@ def run():
     record = settings.RECORD
     if record:
         # initialize video object to record counting
-        output_video = cv2.VideoWriter(settings.OUTPUT_VIDEO_PATH, \
-                                        cv2.VideoWriter_fourcc(*'MJPG'), \
-                                        30, \
-                                        (f_width, f_height))
+        output_video = cv2.VideoWriter(settings.OUTPUT_VIDEO_PATH,
+                                       cv2.VideoWriter_fourcc(*'MJPG'),
+                                       30,
+                                       (f_width, f_height))
 
     logger.info('Processing started.', extra={
         'meta': {
@@ -92,7 +92,8 @@ def run():
     if not headless:
         # capture mouse events in the debug window
         cv2.namedWindow('Debug')
-        cv2.setMouseCallback('Debug', mouse_callback, {'frame_width': f_width, 'frame_height': f_height})
+        cv2.setMouseCallback('Debug', mouse_callback, {
+                             'frame_width': f_width, 'frame_height': f_height})
 
     is_paused = False
     output_frame = None
@@ -102,20 +103,22 @@ def run():
         # main loop
         while retval:
             k = cv2.waitKey(1) & 0xFF
-            if k == ord('p'): # pause/play loop if 'p' key is pressed
+            if k == ord('p'):  # pause/play loop if 'p' key is pressed
                 is_paused = False if is_paused else True
-                logger.info('Loop paused/played.', extra={'meta': {'label': 'PAUSE_PLAY_LOOP', 'is_paused': is_paused}})
-            if k == ord('s') and output_frame is not None: # save frame if 's' key is pressed
+                logger.info(
+                    'Loop paused/played.', extra={'meta': {'label': 'PAUSE_PLAY_LOOP', 'is_paused': is_paused}})
+            if k == ord('s') and output_frame is not None:  # save frame if 's' key is pressed
                 take_screenshot(output_frame)
-            if k == ord('q'): # end video loop if 'q' key is pressed
-                logger.info('Loop stopped.', extra={'meta': {'label': 'STOP_LOOP'}})
+            if k == ord('q'):  # end video loop if 'q' key is pressed
+                logger.info('Loop stopped.', extra={
+                            'meta': {'label': 'STOP_LOOP'}})
                 break
 
             if is_paused:
                 time.sleep(0.5)
                 continue
 
-            _timer = cv2.getTickCount() # set timer to calculate processing frame rate
+            _timer = cv2.getTickCount()  # set timer to calculate processing frame rate
 
             object_counter.count(frame)
             output_frame = object_counter.visualize()
@@ -129,7 +132,8 @@ def run():
                 cv2.imshow('Debug', resized_frame)
 
             frames_count = round(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            processing_frame_rate = round(cv2.getTickFrequency() / (cv2.getTickCount() - _timer), 2)
+            processing_frame_rate = round(
+                cv2.getTickFrequency() / (cv2.getTickCount() - _timer), 2)
             frames_processed += 1
             blobs = object_counter.get_blobs()
             logger.debug('Frame processed.', extra={

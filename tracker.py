@@ -14,6 +14,7 @@ from util.logger import get_logger
 
 logger = get_logger()
 
+
 def _csrt_create(bounding_box, frame):
     '''
     Create an OpenCV CSRT Tracker object.
@@ -22,6 +23,7 @@ def _csrt_create(bounding_box, frame):
     tracker.init(frame, tuple(bounding_box))
     return tracker
 
+
 def _kcf_create(bounding_box, frame):
     '''
     Create an OpenCV KCF Tracker object.
@@ -29,6 +31,7 @@ def _kcf_create(bounding_box, frame):
     tracker = cv2.TrackerKCF_create()
     tracker.init(frame, tuple(bounding_box))
     return tracker
+
 
 def get_tracker(algorithm, bounding_box, frame):
     '''
@@ -44,6 +47,7 @@ def get_tracker(algorithm, bounding_box, frame):
     })
     sys.exit()
 
+
 def _remove_stray_blobs(blobs, matched_blob_ids, mcdf):
     '''
     Remove blobs that "hang" after a tracked object has left the frame.
@@ -54,6 +58,7 @@ def _remove_stray_blobs(blobs, matched_blob_ids, mcdf):
         if blob.num_consecutive_detection_failures > mcdf:
             del blobs[blob_id]
     return blobs
+
 
 def add_new_blobs(boxes, classes, confidences, blobs, frame, tracker, mcdf):
     '''
@@ -82,8 +87,10 @@ def add_new_blobs(boxes, classes, confidences, blobs, frame, tracker, mcdf):
                     'type_confidence': blob.type_confidence,
                 }
                 if settings.LOG_IMAGES:
-                    blob_update_log_meta['image'] = get_base64_image(get_box_image(frame, blob.bounding_box))
-                logger.debug('Blob updated.', extra={'meta': blob_update_log_meta})
+                    blob_update_log_meta['image'] = get_base64_image(
+                        get_box_image(frame, blob.bounding_box))
+                logger.debug('Blob updated.', extra={
+                             'meta': blob_update_log_meta})
                 break
 
         if not match_found:
@@ -99,11 +106,13 @@ def add_new_blobs(boxes, classes, confidences, blobs, frame, tracker, mcdf):
                 'type_confidence': _blob.type_confidence,
             }
             if settings.LOG_IMAGES:
-                blog_create_log_meta['image'] = get_base64_image(get_box_image(frame, _blob.bounding_box))
+                blog_create_log_meta['image'] = get_base64_image(
+                    get_box_image(frame, _blob.bounding_box))
             logger.debug('Blob created.', extra={'meta': blog_create_log_meta})
 
     blobs = _remove_stray_blobs(blobs, matched_blob_ids, mcdf)
     return blobs
+
 
 def remove_duplicates(blobs):
     '''
@@ -117,6 +126,7 @@ def remove_duplicates(blobs):
             if get_overlap(blob_a.bounding_box, blob_b.bounding_box) >= 0.6 and blob_id in blobs:
                 del blobs[blob_id]
     return blobs
+
 
 def update_blob_tracker(blob, blob_id, frame):
     '''

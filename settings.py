@@ -26,9 +26,11 @@ except ValueError:
 
 if WAIT_FOR_CAPTURE:
     try:
-        WAIT_FOR_CAPTURE_TIMEOUT = int(os.getenv('WAIT_FOR_CAPTURE_TIMEOUT', '300')) # in seconds
+        WAIT_FOR_CAPTURE_TIMEOUT = int(
+            os.getenv('WAIT_FOR_CAPTURE_TIMEOUT', '300'))  # in seconds
     except ValueError:
-        print('Invalid value for WAIT_FOR_CAPTURE_TIMEOUT. It should be a positive integer.')
+        print(
+            'Invalid value for WAIT_FOR_CAPTURE_TIMEOUT. It should be a positive integer.')
         ENVS_READY = False
 else:
     WAIT_FOR_CAPTURE_TIMEOUT = 0
@@ -146,8 +148,10 @@ if DETECTOR == 'tfoda' or DETECTOR == 'tfoda_new':
         TFODA_CONFIG_PATH = os.getenv('TFODA_CONFIG_PATH')
         TFODA_MODEL_DIR = os.getenv('TFODA_MODEL_DIR')
         TFODA_CLASSES_PATH = os.getenv('TFODA_CLASSES_PATH')
-        TFODA_CLASSES_OF_INTEREST_PATH = os.getenv('TFODA_CLASSES_OF_INTEREST_PATH')
-        TFODA_CONFIDENCE_THRESHOLD = float(os.getenv('TFODA_CONFIDENCE_THRESHOLD'))
+        TFODA_CLASSES_OF_INTEREST_PATH = os.getenv(
+            'TFODA_CLASSES_OF_INTEREST_PATH')
+        TFODA_CONFIDENCE_THRESHOLD = float(
+            os.getenv('TFODA_CONFIDENCE_THRESHOLD'))
     else:
         print('TFODA_WEIGHTS_PATH, TFODA_CONFIG_PATH, TFODA_MODEL_DIR, TFODA_CLASSES_PATH, ' +
               'TFODA_CLASSES_OF_INTEREST_PATH and/or TFODA_CONFIDENCE_THRESHOLD not set or invalid.')
@@ -163,8 +167,10 @@ if DETECTOR == 'yolo':
         YOLO_WEIGHTS_PATH = os.getenv('YOLO_WEIGHTS_PATH')
         YOLO_CONFIG_PATH = os.getenv('YOLO_CONFIG_PATH')
         YOLO_CLASSES_PATH = os.getenv('YOLO_CLASSES_PATH')
-        YOLO_CLASSES_OF_INTEREST_PATH = os.getenv('YOLO_CLASSES_OF_INTEREST_PATH')
-        YOLO_CONFIDENCE_THRESHOLD = float(os.getenv('YOLO_CONFIDENCE_THRESHOLD'))
+        YOLO_CLASSES_OF_INTEREST_PATH = os.getenv(
+            'YOLO_CLASSES_OF_INTEREST_PATH')
+        YOLO_CONFIDENCE_THRESHOLD = float(
+            os.getenv('YOLO_CONFIDENCE_THRESHOLD'))
     else:
         print('YOLO_WEIGHTS_PATH, YOLO_CONFIG_PATH, YOLO_CLASSES_PATH, YOLO_CLASSES_OF_INTEREST_PATH, ' +
               'and/or YOLO_CONFIDENCE_THRESHOLD not set or invalid.')
@@ -178,12 +184,14 @@ if DETECTOR == 'detectron2':
             os.getenv('DETECTRON2_NUM_CLASSES') and \
             os.getenv('DETECTRON2_CLASSES_PATH') and \
             os.getenv('DETECTRON2_CLASSES_OF_INTEREST_PATH'):
-        DETECTRON2_CONFIDENCE_THRESHOLD = float(os.getenv('DETECTRON2_CONFIDENCE_THRESHOLD'))
+        DETECTRON2_CONFIDENCE_THRESHOLD = float(
+            os.getenv('DETECTRON2_CONFIDENCE_THRESHOLD'))
         DETECTRON2_CONFIG_PATH = os.getenv('DETECTRON2_CONFIG_PATH')
         DETECTRON2_WEIGHTS_PATH = os.getenv('DETECTRON2_WEIGHTS_PATH')
         DETECTRON2_NUM_CLASSES = int(os.getenv('DETECTRON2_NUM_CLASSES'))
         DETECTRON2_CLASSES_PATH = os.getenv('DETECTRON2_CLASSES_PATH')
-        DETECTRON2_CLASSES_OF_INTEREST_PATH = os.getenv('DETECTRON2_CLASSES_OF_INTEREST_PATH')
+        DETECTRON2_CLASSES_OF_INTEREST_PATH = os.getenv(
+            'DETECTRON2_CLASSES_OF_INTEREST_PATH')
     else:
         print('DETECTRON2_CONFIDENCE_THRESHOLD, DETECTRON2_CONFIG_PATH, DETECTRON2_WEIGHTS_PATH, DETECTRON2_NUM_CLASSES, ' +
               'DETECTRON2_CLASSES_PATH and/or DETECTRON2_CLASSES_OF_INTEREST_PATH not set or invalid.')
@@ -191,8 +199,10 @@ if DETECTOR == 'detectron2':
 
 # Log destinations
 try:
-    ENABLE_CONSOLE_LOGGER = ast.literal_eval(os.getenv('ENABLE_CONSOLE_LOGGER', 'True'))
-    ENABLE_FILE_LOGGER = ast.literal_eval(os.getenv('ENABLE_FILE_LOGGER', 'True'))
+    ENABLE_CONSOLE_LOGGER = ast.literal_eval(
+        os.getenv('ENABLE_CONSOLE_LOGGER', 'True'))
+    ENABLE_FILE_LOGGER = ast.literal_eval(
+        os.getenv('ENABLE_FILE_LOGGER', 'True'))
 except ValueError:
     print('Invalid value for ENABLE_CONSOLE_LOGGER and/or ' +
           'ENABLE_FILE_LOGGER. They should be either True or False.')
@@ -214,7 +224,8 @@ except ValueError:
 
 # Size of window used to view the object counting process
 try:
-    DEBUG_WINDOW_SIZE = ast.literal_eval(os.getenv('DEBUG_WINDOW_SIZE', '(858, 480)'))
+    DEBUG_WINDOW_SIZE = ast.literal_eval(
+        os.getenv('DEBUG_WINDOW_SIZE', '(858, 480)'))
 except ValueError:
     print('Invalid value for DEBUG_WINDOW_SIZE. It should be a 2-tuple: (width, height).')
     ENVS_READY = False

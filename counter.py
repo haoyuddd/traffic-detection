@@ -1,10 +1,11 @@
 # pylint: disable=missing-module-docstring,invalid-name
 
 import time
+
 from util.logger import get_logger
 
-
 logger = get_logger()
+
 
 def _line_segments_intersect(line1, line2):
     '''
@@ -18,7 +19,7 @@ def _line_segments_intersect(line1, line2):
 
     def is_on_segment(p, q, r):
         if q[0] <= max(p[0], r[0]) and q[0] >= min(p[0], r[0]) and \
-            q[1] <= max(p[1], r[1]) and q[1] >= min(p[1], r[1]):
+                q[1] <= max(p[1], r[1]) and q[1] >= min(p[1], r[1]):
             return True
         return False
 
@@ -49,6 +50,7 @@ def _line_segments_intersect(line1, line2):
 
     return False
 
+
 def _has_crossed_counting_line(bbox, line):
     '''
     Check if at least one edge of a bounding box is intersected by a counting line.
@@ -65,6 +67,7 @@ def _has_crossed_counting_line(bbox, line):
             _line_segments_intersect(bbox_line4, line):
         return True
     return False
+
 
 def attempt_count(blob, blob_id, counting_lines, counts):
     '''
@@ -89,7 +92,7 @@ def attempt_count(blob, blob_id, counting_lines, counts):
                     'counting_line': label,
                     'position_first_detected': blob.position_first_detected,
                     'position_counted': blob.centroid,
-                    'counted_at':time.time(),
+                    'counted_at': time.time(),
                 },
             })
     return blob, counts
